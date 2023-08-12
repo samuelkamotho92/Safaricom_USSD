@@ -27,22 +27,16 @@ namespace Safaricom_USSD.DataPlan
             Console.WriteLine((int)Plans.Daily + "  " + Plans.Daily);
             Console.WriteLine((int)Plans.Weekly + "  " + Plans.Weekly);
             Console.WriteLine((int)Plans.Monthly + "  " + Plans.Monthly);
+            Console.WriteLine("Select Category");
+            Console.ForegroundColor=ConsoleColor.Yellow;
+            Console.BackgroundColor = ConsoleColor.Black;
             var optionSelected = Console.ReadLine();
-            var selectedCatInput = validateInput(optionSelected);
+            var selectedCatInput = validateInput(optionSelected,4);
             if (selectedCatInput != 0)
             {
                 Console.WriteLine(selectedCatInput);
-                if (selectedCatInput == 1)
-                {
-                    Console.WriteLine("This value ones");
-                }else if (selectedCatInput == 2)
-                {
-                    Console.WriteLine("This is value twos");
-                }
-                else
-                {
-                    Console.WriteLine("This is value threes");
-                }
+                //filter based on value input
+                filterBasedCategory(selectedCatInput);
             }
             else
             {
@@ -50,7 +44,25 @@ namespace Safaricom_USSD.DataPlan
                 showPlanCategory();
             }
         }
-        public int validateInput(string category)
+        public void filterBasedCategory(int category)
+        {
+           var filtered = dataPlans.FindAll(x => (int)x.Plans == category);
+            Console.WriteLine($"{dataPlans.Count}");
+            foreach (var item in filtered)
+            {
+                Console.WriteLine($"{item.Id} : {item.PlanDescription} at {item.Price}");
+             
+            }
+            Console.WriteLine("select option to buy");
+            var optionSelectd = Console.ReadLine();
+            var selectedInput = validateInput(optionSelectd, dataPlans.Count + 1);
+            Console.WriteLine(selectedInput);
+            PurchaseData purchase = new PurchaseData();
+            purchase.Purchase(selectedInput);
+        }
+
+
+        public int validateInput(string category,int limit)
         {
             if (string.IsNullOrWhiteSpace(category))
             {
@@ -60,7 +72,7 @@ namespace Safaricom_USSD.DataPlan
             else
             {
                 bool canConverted = int.TryParse(category, out int converted);
-                if (canConverted && converted > 0 && converted < 4)
+                if (canConverted && converted > 0 && converted < limit)
                 {
                     return converted;
                 }

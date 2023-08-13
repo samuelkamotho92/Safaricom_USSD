@@ -43,12 +43,13 @@ namespace Safaricom_USSD.DataPlan
        public void checkAirtime(int id)
         {
              var selectedPlan = dataPlans.Find(x => x.Id == id);
-            if(selectedPlan.Price > Airtime)
+            if(selectedPlan.Price < Airtime)
             {
                 Console.WriteLine("Purchased successfully");
             }
             else
             {
+                Console.WriteLine("amount is low kindly top up");
                 topUpAirTime(id);
             }
         }
@@ -57,14 +58,40 @@ namespace Safaricom_USSD.DataPlan
             var selectedPlan = dataPlans.Find(x => x.Id == id);
             Console.WriteLine("Add Airtime");
             var amount = Console.ReadLine();
+            Console.WriteLine(amount);
             //enter amount
-           var outputVal = validation.validateInput(amount,1000);
-            if(outputVal != 0)
+            var outputVal = validation.validateInput(amount, 10000);
+            Console.WriteLine($"The value is {outputVal}");
+            if (outputVal != 0)
             {
-                Airtime = outputVal;
-                Purchase(id);
+                Airtime += outputVal;
+                Console.WriteLine($"Current Airtime {Airtime} ,data amount is {selectedPlan.Price}");
+                continuePucharse(id);
             }
 
+        }
+
+        public void continuePucharse(int id)
+        {
+
+       var options = dataPlans.Find(x => x.Id == id);
+            if(options.Price > Airtime)
+            {
+                Console.WriteLine("Insufficient top up");
+                topUpAirTime(id);
+
+            }
+            else
+            {
+                BuyPlan(id);
+            }
+        }
+        public void BuyPlan(int id)
+        {
+            var option = dataPlans.Find(x => x.Id == id);
+            Airtime -= option.Price;
+            Console.WriteLine($"You Have Successfully purchased {option.PlanDescription}!!");
+            return;
         }
 
     }

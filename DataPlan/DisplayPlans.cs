@@ -76,10 +76,7 @@ namespace Safaricom_USSD.DataPlan
                 {
                     return converted;
                 }
-                else
-                {
-                    showPlanCategory();
-                }
+               
                 return 0;
             }
             showPlanCategory();
